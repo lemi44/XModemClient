@@ -1,0 +1,13 @@
+﻿<Window x:Class="XModemClient.Odbierz"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XModemClient"
+        mc:Ignorable="d"
+        Title="Odbierz" Height="300" Width="300" Unloaded="Window_Unloaded">
+    <Grid>
+        <Button x:Name="buttonWroc" Content="Wróć" HorizontalAlignment="Left" Margin="108,239,0,0" VerticalAlignment="Top" Width="75" Click="buttonWroc_Click" IsEnabled="False"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="224" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="272" IsReadOnly="True" Text="{Binding Path=Komunikaty}" Background="LightGray" Loaded="textBox_Loaded" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" TextChanged="textBox_TextChanged"/>
+    </Grid>
+</Window>

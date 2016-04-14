@@ -1,0 +1,28 @@
+﻿<Window x:Class="XModemClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XModemClient"
+        mc:Ignorable="d"
+        Title="XModem" Height="172" Width="512" ResizeMode="NoResize">
+    <Grid>
+        <Label x:Name="label" Content="Port:" HorizontalAlignment="Left" Margin="120,8,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="wyborPortu" HorizontalAlignment="Left" Margin="159,12,0,0" VerticalAlignment="Top" Width="70" SelectedIndex="-1" 
+                  ItemsSource="{Binding Path=ListaPortow}"
+                  DisplayMemberPath="InstanceName"
+                  SelectedValuePath="PortName"
+                  SelectedItem="{Binding Path=WybranyPort}"/>
+        <Label x:Name="label_Copy" Content="Plik do wysłania:" HorizontalAlignment="Left" Margin="57,34,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="buttonWybierzPlik" Content="..." HorizontalAlignment="Left" Margin="159,39,0,0" VerticalAlignment="Top" Width="23" Click="buttonWybierzPlik_Click"/>
+        <Label x:Name="nazwaPliku" Content="{Binding Path=Plik}" HorizontalAlignment="Left" Margin="187,34,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label_Copy1" Content="Plik do zapisania:" HorizontalAlignment="Left" Margin="54,59,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="buttonWybierzFolder" Content="..." HorizontalAlignment="Left" Margin="159,65,0,0" VerticalAlignment="Top" Width="23" Click="buttonWybierzFolder_Click"/>
+        <Label x:Name="nazwaPlikuZapisu" Content="{Binding Path=PlikZapis}" HorizontalAlignment="Left" Margin="187,60,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="buttonWyslij" Content="Wyślij plik" HorizontalAlignment="Left" Margin="79,91,0,0" VerticalAlignment="Top" Width="75" Click="buttonWyslij_Click"/>
+        <Button x:Name="buttonOdbierz" Content="Odbierz plik" HorizontalAlignment="Left" Margin="159,91,0,0" VerticalAlignment="Top" Width="75" Click="buttonOdbierz_Click"/>
+        <RadioButton x:Name="radioButton" Content="CRC" HorizontalAlignment="Left" Margin="239,94,0,0" VerticalAlignment="Top" GroupName="kod" IsChecked="True"/>
+        <RadioButton x:Name="radioButton_Copy" Content="Sumy kontrolne" HorizontalAlignment="Left" Margin="285,94,0,0" VerticalAlignment="Top" GroupName="kod"/>
+
+    </Grid>
+</Window>
