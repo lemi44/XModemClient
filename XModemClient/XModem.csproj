@@ -99,10 +99,8 @@
     <Compile Include="Odbierz.xaml.cs">
       <DependentUpon>Odbierz.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIHelper.cs" />
     <Compile Include="ViewModel.cs" />
     <Compile Include="Port.cs" />
-    <Compile Include="WPFextension.cs" />
     <Compile Include="Wyslij.xaml.cs">
       <DependentUpon>Wyslij.xaml</DependentUpon>
     </Compile>
