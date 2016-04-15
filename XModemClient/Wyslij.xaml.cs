@@ -51,5 +51,10 @@ namespace XModemClient
         {
             textBox.ScrollToEnd();
         }
+
+        private void buttonAnuluj_Click(object sender, RoutedEventArgs e)
+        {
+            (DataContext as ViewModel).AnulujTransmisje(buttonAnuluj);
+        }
     }
 }

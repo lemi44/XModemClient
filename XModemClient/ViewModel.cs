@@ -65,8 +65,10 @@ namespace XModemClient
                 _backgroundworker1_sender = sender;
                 _backgroundworker1_button = button;
                 _backgroundworker1.DoWork += new DoWorkEventHandler(WyslijPlikAsync);
+                _backgroundworker1.WorkerSupportsCancellation = true;
                 _backgroundworker1.RunWorkerCompleted += new RunWorkerCompletedEventHandler(WyslijPlikAsyncCompleted);
                 _backgroundworker1.RunWorkerAsync();
+                (sender as Wyslij).buttonAnuluj.IsEnabled = true;
             }
             else
                 Komunikaty += "Program nie może wysłać pliku ponieważ obecnie pracuje";
@@ -76,11 +78,15 @@ namespace XModemClient
         {
             _backgroundworker1.DoWork -= WyslijPlikAsync;
             _backgroundworker1_button.IsEnabled = true;
+            if (_backgroundworker1_sender as Wyslij != null)
+                if ((_backgroundworker1_sender as Wyslij).buttonAnuluj != null)
+                    (_backgroundworker1_sender as Wyslij).buttonAnuluj.IsEnabled = false;
+            _backgroundworker1.RunWorkerCompleted -= WyslijPlikAsyncCompleted;
         }
 
         private void WyslijPlikAsync(object sender, DoWorkEventArgs e)
         {
-            _XModem.WyslijPlik(_wybranyPort, _plik);
+            _XModem.WyslijPlik(_wybranyPort, _plik, _backgroundworker1);
         }
 
         public void OdbierzPlik(object sender, Button button, bool CRC)
@@ -91,8 +97,10 @@ namespace XModemClient
                 _backgroundworker1_button = button;
                 _backgroundworker1_CRC = CRC;
                 _backgroundworker1.DoWork += new DoWorkEventHandler(OdbierzPlikAsync);
+                _backgroundworker1.WorkerSupportsCancellation = true;
                 _backgroundworker1.RunWorkerCompleted += new RunWorkerCompletedEventHandler(OdbierzPlikAsyncCompleted);
                 _backgroundworker1.RunWorkerAsync();
+                (sender as Odbierz).buttonAnuluj.IsEnabled = true;
             }
             else
                 Komunikaty += "Program nie może wysłać pliku ponieważ obecnie pracuje";
@@ -102,11 +110,15 @@ namespace XModemClient
         {
             _backgroundworker1.DoWork -= OdbierzPlikAsync;
             _backgroundworker1_button.IsEnabled = true;
+            if (_backgroundworker1_sender as Odbierz != null)
+                if ((_backgroundworker1_sender as Odbierz).buttonAnuluj != null)
+                    (_backgroundworker1_sender as Odbierz).buttonAnuluj.IsEnabled = false;
+            _backgroundworker1.RunWorkerCompleted -= OdbierzPlikAsyncCompleted;
         }
 
         public void OdbierzPlikAsync(object sender, DoWorkEventArgs e)
         {
-            _XModem.OdbierzPlik(_wybranyPort, _plikzapis, _backgroundworker1_CRC);
+            _XModem.OdbierzPlik(_wybranyPort, _plikzapis, _backgroundworker1_CRC, _backgroundworker1);
         }
         /*
         public int NrWybranegoPortu
@@ -121,6 +133,14 @@ namespace XModemClient
             }
         }
         */
+        public void AnulujTransmisje(Button btnCancel)
+        {
+            if (_backgroundworker1.IsBusy && _backgroundworker1.WorkerSupportsCancellation)
+            {
+                _backgroundworker1.CancelAsync();
+                btnCancel.IsEnabled = false;
+            }
+        }
         public string Plik
         {
             get { return _plik; }

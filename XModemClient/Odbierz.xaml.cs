@@ -53,5 +53,9 @@ namespace XModemClient
         {
             (DataContext as ViewModel).Komunikaty = "";
         }
+        private void buttonAnuluj_Click(object sender, RoutedEventArgs e)
+        {
+            (DataContext as ViewModel).AnulujTransmisje(buttonAnuluj);
+        }
     }
 }

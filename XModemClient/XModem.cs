@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace XModemClient
             CzyNawiazanoTransmisje = false;
         }
 
-        public bool WyslijPlik(Port port, string nazwaPliku)
+        public bool WyslijPlik(Port port, string nazwaPliku, BackgroundWorker bgwrk)
         {
             kod = 0;
             paczka = new byte[128];
@@ -44,6 +45,11 @@ namespace XModemClient
             if(!File.Exists(nazwaPliku))
             {
                 KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Plik nie istnieje"));
+                return false;
+            }
+            if(bgwrk.CancellationPending)
+            {
+                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                 return false;
             }
             using (SerialPort comPort = new SerialPort(port.PortName))
@@ -69,6 +75,12 @@ namespace XModemClient
                     {
                         try
                         {
+                            if (bgwrk.CancellationPending)
+                            {
+                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                comPort.Write(new byte[] { 24 }, 0, 1);
+                                return false;
+                            }
                             KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
                             odczytanyZnak = Convert.ToChar(comPort.ReadChar());
                             string komunikat = "Otrzymano znak:[" + odczytanyZnak + "]";
@@ -112,6 +124,12 @@ namespace XModemClient
                         {
                             while (czytnik.BaseStream.Position!=czytnik.BaseStream.Length)
                             {
+                                if (bgwrk.CancellationPending)
+                                {
+                                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                    comPort.Write(new byte[] { 24 }, 0, 1);
+                                    return false;
+                                }
                                 for (int i = 0; i < 128; i++)
                                     paczka[i] = 26;
                                 int w = 0;
@@ -125,6 +143,12 @@ namespace XModemClient
                                 bool czyPoprawnyPakiet = false;
                                 while(!czyPoprawnyPakiet)
                                 {
+                                    if (bgwrk.CancellationPending)
+                                    {
+                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                        comPort.Write(new byte[] { 24 }, 0, 1);
+                                        return false;
+                                    }
                                     KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Trwa wysyłanie pakietu nr "+nrPakietu+", dopełnienie "+(255 - nrPakietu)+", proszę czekać..."));
                                     comPort.Write(new byte[] { 1 }, 0, 1); //SOH
                                     comPort.Write(new byte[] { (byte)nrPakietu }, 0, 1);
@@ -149,6 +173,12 @@ namespace XModemClient
                                     {
                                         try
                                         {
+                                            if (bgwrk.CancellationPending)
+                                            {
+                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                                comPort.Write(new byte[] { 24 }, 0, 1);
+                                                return false;
+                                            }
                                             byte znak = (byte)comPort.ReadByte();
                                             if(znak==6) //ACK
                                             {
@@ -184,6 +214,12 @@ namespace XModemClient
                     }
                     while (true)
                     {
+                        if (bgwrk.CancellationPending)
+                        {
+                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                            comPort.Write(new byte[] { 24 }, 0, 1);
+                            return false;
+                        }
                         comPort.Write(new byte[] { 4 }, 0, 1); // SEND EOT
                         try
                         {
@@ -208,7 +244,7 @@ namespace XModemClient
             }
             return false;
         }
-        public bool OdbierzPlik(Port port, string nazwaPliku, bool IsCRC)
+        public bool OdbierzPlik(Port port, string nazwaPliku, bool IsCRC, BackgroundWorker bgwrk)
         {
             paczka = new byte[128];
             if (port == null)
@@ -219,6 +255,11 @@ namespace XModemClient
             if (nazwaPliku == null || nazwaPliku == "")
             {
                 KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Nie ustawiono pliku"));
+                return false;
+            }
+            if (bgwrk.CancellationPending)
+            {
+                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                 return false;
             }
             using (SerialPort comPort = new SerialPort(port.PortName))
@@ -244,6 +285,12 @@ namespace XModemClient
                     {
                         try
                         {
+                            if (bgwrk.CancellationPending)
+                            {
+                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                comPort.Write(new byte[] { 24 }, 0, 1);
+                                return false;
+                            }
                             KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
                             KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Wysyłanie"));
                             byte[] znak;
@@ -290,6 +337,12 @@ namespace XModemClient
                             {
                                 while (true)
                                 {
+                                    if (bgwrk.CancellationPending)
+                                    {
+                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                        comPort.Write(new byte[] { 24 }, 0, 1);
+                                        return false;
+                                    }
                                     byte[] sumcheck;
                                     nrPakietu = comPort.ReadByte();
                                     nrPakietuDo255 = comPort.ReadByte();
@@ -307,6 +360,13 @@ namespace XModemClient
                                         comPort.Read(sumcheck, 0, 1);
                                     }
                                     bool poprawnyPakiet = true;
+
+                                    if (bgwrk.CancellationPending)
+                                    {
+                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                        comPort.Write(new byte[] { 24 }, 0, 1);
+                                        return false;
+                                    }
 
                                     if ((255 - nrPakietu) != nrPakietuDo255)
                                     {
@@ -348,6 +408,12 @@ namespace XModemClient
                                         {
                                             if (paczka[i] != 26)
                                                 plik.Write(paczka[i]);
+                                        }
+                                        if (bgwrk.CancellationPending)
+                                        {
+                                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                            comPort.Write(new byte[] { 24 }, 0, 1);
+                                            return false;
                                         }
                                         KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Odebranie pakietu zakończone sukcesem"));
                                         comPort.Write(new byte[] { 6 }, 0, 1); //ACK
