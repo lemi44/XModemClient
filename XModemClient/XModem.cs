@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace XModemClient
 {
@@ -78,7 +76,12 @@ namespace XModemClient
                             if (bgwrk.CancellationPending)
                             {
                                 KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
-                                comPort.Write(new byte[] { 24 }, 0, 1);
+                                try
+                                {
+                                    comPort.Write(new byte[] { 24 }, 0, 1);
+                                }
+                                catch (Exception e)
+                                { }
                                 return false;
                             }
                             KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
@@ -288,7 +291,12 @@ namespace XModemClient
                             if (bgwrk.CancellationPending)
                             {
                                 KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
-                                comPort.Write(new byte[] { 24 }, 0, 1);
+                                try
+                                {
+                                    comPort.Write(new byte[] { 24 }, 0, 1);
+                                }
+                                catch(Exception e)
+                                { }
                                 return false;
                             }
                             KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
