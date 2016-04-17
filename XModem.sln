@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XModem", "XModemClient\XModem.csproj", "{24A7B43B-8650-4D7B-B884-763A5E1DB03F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XModemUnitTest", "XModemUnitTest\XModemUnitTest.csproj", "{FB613FB2-F097-4C60-BFB3-3925C97EB2FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{24A7B43B-8650-4D7B-B884-763A5E1DB03F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A7B43B-8650-4D7B-B884-763A5E1DB03F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A7B43B-8650-4D7B-B884-763A5E1DB03F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB613FB2-F097-4C60-BFB3-3925C97EB2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB613FB2-F097-4C60-BFB3-3925C97EB2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB613FB2-F097-4C60-BFB3-3925C97EB2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB613FB2-F097-4C60-BFB3-3925C97EB2FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

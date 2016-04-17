@@ -386,9 +386,8 @@ namespace XModemClient
                                     {
                                         if (IsCRC)
                                         {
-                                            byte[] tmpCRC = CRC.Policz(paczka);
                                             KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Suma kontrolna = " + (sumcheck[0]+sumcheck[1]<<8)));
-                                            if (sumcheck[0] != tmpCRC[0] || sumcheck[1] != tmpCRC[1])
+                                            if (!CRC.Sprawdz(paczka,sumcheck))
                                             {
                                                 KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - zła suma kontrolna"));
                                                 comPort.Write(new byte[] { 21 }, 0, 1); //NAK
