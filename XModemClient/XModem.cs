@@ -32,27 +32,27 @@ namespace XModemClient
             nrPakietu = 1;
             if(port==null)
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Nie znaleziono portu"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Nie znaleziono portu"));
                 return false;
             }
             if (nazwaPliku == null || nazwaPliku == "")
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Nie ustawiono pliku"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Nie ustawiono pliku"));
                 return false;
             }
             if(!File.Exists(nazwaPliku))
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Plik nie istnieje"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Plik nie istnieje"));
                 return false;
             }
             if(bgwrk.CancellationPending)
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                 return false;
             }
             using (SerialPort comPort = new SerialPort(port.PortName))
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Ustawiam parametry (9600kb/s, 8-bitowe dane, jeden bit stopu)"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Ustawiam parametry (9600kb/s, 8-bitowe dane, jeden bit stopu)"));
                 comPort.BaudRate = 9600;
                 comPort.Parity = Parity.None;
                 comPort.StopBits = StopBits.One;
@@ -61,13 +61,13 @@ namespace XModemClient
                 comPort.RtsEnable = false;
                 comPort.ReadTimeout = 10000;
                 comPort.WriteTimeout = 100;
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próbuję otworzyć port " + port?.InstanceName + "..."));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Próbuję otworzyć port " + port?.InstanceName + "..."));
                 comPort.Open();
                 if (comPort.IsOpen)
                 {
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Otworzono port"));
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Rozpoczynam wysyłanie pliku " + nazwaPliku));
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Oczekiwanie na rozpoczęcie transmisji..."));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Otworzono port"));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Rozpoczynam wysyłanie pliku " + nazwaPliku));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Oczekiwanie na rozpoczęcie transmisji..."));
                     char odczytanyZnak;
                     for (int i = 0; i < 6; i++)
                     {
@@ -75,7 +75,7 @@ namespace XModemClient
                         {
                             if (bgwrk.CancellationPending)
                             {
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                 try
                                 {
                                     comPort.Write(new byte[] { 24 }, 0, 1);
@@ -84,13 +84,13 @@ namespace XModemClient
                                 { }
                                 return false;
                             }
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
                             odczytanyZnak = Convert.ToChar(comPort.ReadChar());
                             string komunikat = "Otrzymano znak:[" + odczytanyZnak + "]";
 
                             if (odczytanyZnak == 'X')
                             {
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(komunikat));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs(komunikat));
                                 kod = 1;
                                 CzyNawiazanoTransmisje = true;
                                 break;
@@ -98,29 +98,29 @@ namespace XModemClient
                             else if (odczytanyZnak == (char)21)
                             {
                                 komunikat += "/[NAK]";
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(komunikat));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs(komunikat));
                                 kod = 2;
                                 CzyNawiazanoTransmisje = true;
                                 break;
                             }
                             else
                             {
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(komunikat));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs(komunikat));
                             }
                         }
                         catch (TimeoutException e)
                         {
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + " zakończona niepowodzeniem"));
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(e.Message));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + " zakończona niepowodzeniem"));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs(e.Message));
                             continue;
                         }
                     }
                     if (!CzyNawiazanoTransmisje)
                     {
-                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nawiązania połączenia zakończona niepowodzeniem"));
+                        KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nawiązania połączenia zakończona niepowodzeniem"));
                         return false;
                     }
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Połączenie zostało nawiązane, próba odczytania pliku..."));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Połączenie zostało nawiązane, próba odczytania pliku..."));
                     using (FileStream plik = new FileStream(nazwaPliku, FileMode.Open))
                     {
                         using (BinaryReader czytnik = new BinaryReader(plik))
@@ -129,7 +129,7 @@ namespace XModemClient
                             {
                                 if (bgwrk.CancellationPending)
                                 {
-                                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                    KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                     comPort.Write(new byte[] { 24 }, 0, 1);
                                     return false;
                                 }
@@ -148,11 +148,11 @@ namespace XModemClient
                                 {
                                     if (bgwrk.CancellationPending)
                                     {
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                         comPort.Write(new byte[] { 24 }, 0, 1);
                                         return false;
                                     }
-                                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Trwa wysyłanie pakietu nr "+nrPakietu+", dopełnienie "+(255 - nrPakietu)+", proszę czekać..."));
+                                    KomunikatXModem(this, new KomunikatXModemEventArgs("Trwa wysyłanie pakietu nr "+nrPakietu+", dopełnienie "+(255 - nrPakietu)+", proszę czekać..."));
                                     comPort.Write(new byte[] { 1 }, 0, 1); //SOH
                                     comPort.Write(new byte[] { (byte)nrPakietu }, 0, 1);
                                     comPort.Write(new byte[] { (byte)(255 - nrPakietu) }, 0, 1);
@@ -164,13 +164,13 @@ namespace XModemClient
                                         for (int i = 0; i < 128; i++)
                                             suma_kontrolna = (byte)((suma_kontrolna + paczka[i]) % 256);
                                         comPort.Write(new byte[] { suma_kontrolna }, 0, 1);
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Suma kontrolna = " + suma_kontrolna));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("Suma kontrolna = " + suma_kontrolna));
                                     }
                                     else if (kod == 1) //obliczanie CRC i transfer
                                     {
                                         byte[] crc = CRC.Policz(paczka);
                                         comPort.Write(crc, 0, crc.Count());
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("CRC = " + (crc[0]+crc[1]<<8)));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("CRC = " + (crc[0]+crc[1]<<8)));
                                     }
                                     while(true)
                                     {
@@ -178,7 +178,7 @@ namespace XModemClient
                                         {
                                             if (bgwrk.CancellationPending)
                                             {
-                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                                KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                                 comPort.Write(new byte[] { 24 }, 0, 1);
                                                 return false;
                                             }
@@ -186,24 +186,24 @@ namespace XModemClient
                                             if(znak==6) //ACK
                                             {
                                                 czyPoprawnyPakiet = true;
-                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Przesłano poprawnie pakiet danych"));
+                                                KomunikatXModem(this, new KomunikatXModemEventArgs("Przesłano poprawnie pakiet danych"));
                                                 break;
                                             }
                                             if(znak==21) //NAK
                                             {
-                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - otrzymano NAK"));
+                                                KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - otrzymano NAK"));
                                                 break;
                                             }
                                             if(znak==24) //CAN
                                             {
-                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - połączenie przerwane"));
+                                                KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - połączenie przerwane"));
                                                 return false;
                                             }
 
                                         }
                                         catch(System.TimeoutException e)
                                         {
-                                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(e.Message));
+                                            KomunikatXModem(this, new KomunikatXModemEventArgs(e.Message));
                                             return false;
                                         }
                                     }
@@ -219,7 +219,7 @@ namespace XModemClient
                     {
                         if (bgwrk.CancellationPending)
                         {
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                             comPort.Write(new byte[] { 24 }, 0, 1);
                             return false;
                         }
@@ -236,12 +236,12 @@ namespace XModemClient
 
                         }
                     }
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Wysłano plik"));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Wysłano plik"));
                     return true;
                 }
                 else
                 {
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Otworzenie portu się niepowiodło"));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Otworzenie portu się niepowiodło"));
 
                 }
             }
@@ -252,22 +252,22 @@ namespace XModemClient
             paczka = new byte[128];
             if (port == null)
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Nie znaleziono portu"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Nie znaleziono portu"));
                 return false;
             }
             if (nazwaPliku == null || nazwaPliku == "")
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Nie ustawiono pliku"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Nie ustawiono pliku"));
                 return false;
             }
             if (bgwrk.CancellationPending)
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                 return false;
             }
             using (SerialPort comPort = new SerialPort(port.PortName))
             {
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Ustawiam parametry (9600kb/s, 8-bitowe dane, jeden bit stopu)"));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Ustawiam parametry (9600kb/s, 8-bitowe dane, jeden bit stopu)"));
                 comPort.BaudRate = 9600;
                 comPort.Parity = Parity.None;
                 comPort.StopBits = StopBits.One;
@@ -276,13 +276,13 @@ namespace XModemClient
                 comPort.RtsEnable = false;
                 comPort.ReadTimeout = 10000;
                 comPort.WriteTimeout = 100;
-                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próbuję otworzyć port " + port?.InstanceName + "..."));
+                KomunikatXModem(this, new KomunikatXModemEventArgs("Próbuję otworzyć port " + port?.InstanceName + "..."));
                 comPort.Open();
                 if (comPort.IsOpen)
                 {
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Otworzono port"));
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Rozpoczynam odbieranie pliku"));
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nawiązania połączenia..."));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Otworzono port"));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Rozpoczynam odbieranie pliku"));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nawiązania połączenia..."));
                     char odczytanyZnak=(char)24;
                     for (int i = 0; i < 6; i++)
                     {
@@ -290,7 +290,7 @@ namespace XModemClient
                         {
                             if (bgwrk.CancellationPending)
                             {
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                 try
                                 {
                                     comPort.Write(new byte[] { 24 }, 0, 1);
@@ -299,44 +299,44 @@ namespace XModemClient
                                 { }
                                 return false;
                             }
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Wysyłanie"));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + "..."));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Wysyłanie"));
                             byte[] znak;
                             if (IsCRC)
                                 znak = Encoding.ASCII.GetBytes("X");
                             else
                                 znak = new byte[] { 21 }; //NAK
                             comPort.Write(znak, 0, znak.Count());
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Oczekiwanie na SOH..."));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Oczekiwanie na SOH..."));
                             odczytanyZnak = Convert.ToChar(comPort.ReadChar());
                             string komunikat = "Otrzymano znak:[" + odczytanyZnak + "]";
 
                             if (odczytanyZnak == (char)1)
                             {
                                 komunikat += "/[SOH]";
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(komunikat));
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Nawiązano połączenie"));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs(komunikat));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs("Nawiązano połączenie"));
                                 CzyNawiazanoTransmisje = true;
                                 break;
                             }
                             else
                             {
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(komunikat));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs(komunikat));
                             }
                         }
                         catch (TimeoutException e)
                         {
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + " zakończona niepowodzeniem"));
-                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(e.Message));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nr " + (i + 1) + " zakończona niepowodzeniem"));
+                            KomunikatXModem(this, new KomunikatXModemEventArgs(e.Message));
                             continue;
                         }
                     }
                     if (!CzyNawiazanoTransmisje)
                     {
-                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Próba nawiązania połączenia zakończona niepowodzeniem"));
+                        KomunikatXModem(this, new KomunikatXModemEventArgs("Próba nawiązania połączenia zakończona niepowodzeniem"));
                         return false;
                     }
-                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Połączenie zostało nawiązane, próba odebrania pliku..."));
+                    KomunikatXModem(this, new KomunikatXModemEventArgs("Połączenie zostało nawiązane, próba odebrania pliku..."));
                     using (FileStream fs = new FileStream(nazwaPliku, FileMode.Create))
                     {
                         using (BinaryWriter plik = new BinaryWriter(fs))
@@ -347,7 +347,7 @@ namespace XModemClient
                                 {
                                     if (bgwrk.CancellationPending)
                                     {
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                         comPort.Write(new byte[] { 24 }, 0, 1);
                                         return false;
                                     }
@@ -371,14 +371,14 @@ namespace XModemClient
 
                                     if (bgwrk.CancellationPending)
                                     {
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                         comPort.Write(new byte[] { 24 }, 0, 1);
                                         return false;
                                     }
 
                                     if ((255 - nrPakietu) != nrPakietuDo255)
                                     {
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - otrzymano niepoprawny numer pakietu: "+nrPakietu+", dopelnienie "+nrPakietuDo255));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - otrzymano niepoprawny numer pakietu: "+nrPakietu+", dopelnienie "+nrPakietuDo255));
                                         comPort.Write(new byte[] { 21 }, 0, 1); //NAK
                                         poprawnyPakiet = false;
                                     }
@@ -386,10 +386,10 @@ namespace XModemClient
                                     {
                                         if (IsCRC)
                                         {
-                                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Suma kontrolna = " + (sumcheck[0]+sumcheck[1]<<8)));
+                                            KomunikatXModem(this, new KomunikatXModemEventArgs("Suma kontrolna = " + (sumcheck[0]+sumcheck[1]<<8)));
                                             if (!CRC.Sprawdz(paczka,sumcheck))
                                             {
-                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - zła suma kontrolna"));
+                                                KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - zła suma kontrolna"));
                                                 comPort.Write(new byte[] { 21 }, 0, 1); //NAK
                                                 poprawnyPakiet = false;
                                             }
@@ -399,10 +399,10 @@ namespace XModemClient
                                             byte suma_kontrolna = 26;
                                             for (int i = 0; i < 128; i++)
                                                 suma_kontrolna = (byte)((suma_kontrolna + paczka[i]) % 256);
-                                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Suma kontrolna = " + sumcheck[0]));
+                                            KomunikatXModem(this, new KomunikatXModemEventArgs("Suma kontrolna = " + sumcheck[0]));
                                             if (suma_kontrolna != sumcheck[0])
                                             {
-                                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - zła suma kontrolna"));
+                                                KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - zła suma kontrolna"));
                                                 comPort.Write(new byte[] { 21 }, 0, 1); //NAK
                                                 poprawnyPakiet = false;
                                             }
@@ -418,22 +418,22 @@ namespace XModemClient
                                         }
                                         if (bgwrk.CancellationPending)
                                         {
-                                            KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
+                                            KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
                                             comPort.Write(new byte[] { 24 }, 0, 1);
                                             return false;
                                         }
-                                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Odebranie pakietu zakończone sukcesem"));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("Odebranie pakietu zakończone sukcesem"));
                                         comPort.Write(new byte[] { 6 }, 0, 1); //ACK
                                     }
                                     odczytanyZnak = (char)comPort.ReadChar();
                                     if (odczytanyZnak == (char)4 || odczytanyZnak == (char)24) //EOT or CAN
                                         break;
-                                    KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Kontynuuję odbiór danych..."));
+                                    KomunikatXModem(this, new KomunikatXModemEventArgs("Kontynuuję odbiór danych..."));
                                 }
                             }
                             catch(System.TimeoutException e)
                             {
-                                KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs(e.Message));
+                                KomunikatXModem(this, new KomunikatXModemEventArgs(e.Message));
                                 odczytanyZnak = (char)24;
                             }
                         }
@@ -441,12 +441,12 @@ namespace XModemClient
                     comPort.Write(new byte[] { 6 }, 0, 1); //ACK
                     if (odczytanyZnak == (char)4)
                     {
-                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("Odebrano poprawnie plik"));
+                        KomunikatXModem(this, new KomunikatXModemEventArgs("Odebrano poprawnie plik"));
                         return true;
                     }
                     else
                     {
-                        KomunikatXModem?.Invoke(this, new KomunikatXModemEventArgs("ERROR - połączenie zostało przerwane"));
+                        KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - połączenie zostało przerwane"));
                         return false;
                     }
                 }
