@@ -88,7 +88,7 @@ namespace XModemClient
                             odczytanyZnak = Convert.ToChar(comPort.ReadChar());
                             string komunikat = "Otrzymano znak:[" + odczytanyZnak + "]";
 
-                            if (odczytanyZnak == 'X')
+                            if (odczytanyZnak == 'C')
                             {
                                 KomunikatXModem(this, new KomunikatXModemEventArgs(komunikat));
                                 kod = 1;
@@ -209,7 +209,7 @@ namespace XModemClient
                                     }
                                 }
                                 if (nrPakietu == 255)
-                                    nrPakietu = 1;
+                                    nrPakietu = 0;
                                 else
                                     nrPakietu++;
                             }
@@ -303,7 +303,10 @@ namespace XModemClient
                             KomunikatXModem(this, new KomunikatXModemEventArgs("Wysyłanie"));
                             byte[] znak;
                             if (IsCRC)
-                                znak = Encoding.ASCII.GetBytes("X");
+                            {
+                                znak = Encoding.ASCII.GetBytes("C");
+                                comPort.ReadTimeout = 3000;
+                            }
                             else
                                 znak = new byte[] { 21 }; //NAK
                             comPort.Write(znak, 0, znak.Count());
