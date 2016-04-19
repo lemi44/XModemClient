@@ -170,7 +170,7 @@ namespace XModemClient
                                     {
                                         byte[] crc = CRC.Policz(paczka);
                                         comPort.Write(crc, 0, crc.Count());
-                                        KomunikatXModem(this, new KomunikatXModemEventArgs("CRC = " + (crc[0]+crc[1]<<8)));
+                                        KomunikatXModem(this, new KomunikatXModemEventArgs("CRC = " + BitConverter.ToUInt16(crc, 0).ToString("X4")));
                                     }
                                     while(true)
                                     {
@@ -368,7 +368,7 @@ namespace XModemClient
                                         comPort.Read(sumcheck, 0, 1);
                                     }
                                     bool poprawnyPakiet = true;
-
+                                    KomunikatXModem(this, new KomunikatXModemEventArgs("Odebrano pakiet nr: "+nrPakietu+", dopelnienie: "+nrPakietuDo255));
                                     if (bgwrk.CancellationPending)
                                     {
                                         KomunikatXModem(this, new KomunikatXModemEventArgs("Anulowano transmisję"));
@@ -386,7 +386,7 @@ namespace XModemClient
                                     {
                                         if (IsCRC)
                                         {
-                                            KomunikatXModem(this, new KomunikatXModemEventArgs("Suma kontrolna = " + (sumcheck[0]+sumcheck[1]<<8)));
+                                            KomunikatXModem(this, new KomunikatXModemEventArgs("CRC = " + BitConverter.ToUInt16(sumcheck,0).ToString("X4")));
                                             if (!CRC.Sprawdz(paczka,sumcheck))
                                             {
                                                 KomunikatXModem(this, new KomunikatXModemEventArgs("ERROR - zła suma kontrolna"));
